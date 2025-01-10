@@ -21,9 +21,12 @@ public class androidOp extends LinearOpMode {
     private Servo claw;
     private DcMotor slides;
     // Software limits for the slide (you can modify these)
-    private static final double SLIDE_MIN_POSITION = 0.0;  // minimum position (e.g., bottom of slide)
-    private static final double SLIDE_MAX_POSITION = 4750;  // maximum position (e.g., top of slide)
-    private static final double SLIDE_SPEED = 1;        // speed multiplier for the slide movement
+    private final int LOWER_LIMIT = 0; // Minimum encoder position (retracted)
+    private final int MAX_EXTENSION_LIMIT = 5000; // Maximum encoder position (fully extended)
+
+    // Angle limits
+    private final int ANGLE_MIN = 2000; // Minimum angle position (fully lowered)
+    private final int ANGLE_MAX = 4000; // Maximum angle position (fully raised)
 
 
     @Override
@@ -46,11 +49,14 @@ public class androidOp extends LinearOpMode {
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
         //slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        TL = hardwareMap.get(DcMotor.class,"TL");
         TR = hardwareMap.get(DcMotor.class,"TR");
         TR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        TL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        TL.setDirection(DcMotor.Direction.REVERSE);
+
+        // Reset encoders and set run mode
+        slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        TR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        TR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -144,25 +150,40 @@ public class androidOp extends LinearOpMode {
                 {
                     rol = 0;
                 }
-                // Get joystick input (negative is up, positive is down)
-                double joystickInput = -gamepad2.right_stick_y;  // Invert if needed (up = negative, down = positive)
 
-                // Map joystick input to slide speed
-                double slidePower = joystickInput * SLIDE_SPEED;
+                // Slide motor control (gamepad2.right_stick_y)
+                int currentPosition = slides.getCurrentPosition();
+                int dynamicUpperLimit = calculateDynamicUpperLimit(currentPosition);
+                double slidePower = -gamepad2.right_stick_x;
 
-                // Apply the software limits
-                if (slides.getCurrentPosition() <= SLIDE_MIN_POSITION && slidePower < 0) {
-                    slidePower = 0;  // Prevent moving down past the minimum limit
-                } else if (slides.getCurrentPosition() >= SLIDE_MAX_POSITION && slidePower > 0) {
-                    slidePower = 0;  // Prevent moving up past the maximum limit
+                // software limits for slide extension
+                if (currentPosition <= LOWER_LIMIT && slidePower < 0) {
+                    slidePower = 0;
+                } else if (currentPosition >= dynamicUpperLimit && slidePower > 0) {
+                    slidePower = 0;
                 }
-
-                // Set motor power to the calculated slidePower
                 slides.setPower(slidePower);
 
-                // Add telemetry for debugging
-                telemetry.addData("Slide Position", slides.getCurrentPosition());
-                telemetry.addData("Joystick Input", joystickInput);
+                // TR control (gamepad2.left_stick_y)
+                int anglePosition = TR.getCurrentPosition();
+                double anglePower = -gamepad2.left_stick_y;
+
+                //  software limits for TR
+                if (anglePosition <= ANGLE_MIN && anglePower < 0) {
+                    anglePower = 0;
+                } else if (anglePosition >= ANGLE_MAX && anglePower > 0) {
+                    anglePower = 0;
+                }
+
+                TR.setPower(anglePower);
+
+                // Telemetry for debugging
+                telemetry.addData("Slide Position", currentPosition);
+                telemetry.addData("Dynamic Upper Limit", dynamicUpperLimit);
+                telemetry.addData("Angle Position", anglePosition);
+                telemetry.update();
+
+
                 pitch.setPosition(rotate2);
                 roll.setPosition(rol);
                 //nate.setPosition(rotate2);
@@ -172,6 +193,22 @@ public class androidOp extends LinearOpMode {
                 telemetry.addData("rol: ",rol);
                 telemetry.update();
             }
+        }
+    }
+
+    /**
+     * Calculates the dynamic upper limit based on the slide's current position.
+     * @param currentPosition The current position of the slides (encoder value).
+     * @return The dynamically calculated upper limit.
+     */
+    private int calculateDynamicUpperLimit(int currentPosition) {
+        //Allow more extension as the slide moves up
+        if (currentPosition < 1000) {
+            return LOWER_LIMIT + 4000;
+        } else if (currentPosition < 3000) {
+            return LOWER_LIMIT + 6000;
+        } else {
+            return MAX_EXTENSION_LIMIT;
         }
     }
 }
