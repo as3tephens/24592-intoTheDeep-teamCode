@@ -14,7 +14,6 @@ public class androidOp extends LinearOpMode {
     private DcMotor BR;
     private DcMotor FL;
     private DcMotor FR;
-    private DcMotor TL;
     private DcMotor TR;
     private Servo roll;
     private Servo pitch;
@@ -49,7 +48,7 @@ public class androidOp extends LinearOpMode {
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
         //slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        TR = hardwareMap.get(DcMotor.class,"TR");
+        TR = hardwareMap.get(DcMotor.class, "TR");
         TR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Reset encoders and set run mode
@@ -80,10 +79,10 @@ public class androidOp extends LinearOpMode {
                 //slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-                BL.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x/2);
-                BR.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x/2);
-                FL.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x/2);
-                FR.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x/2);
+                BL.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x / 2);
+                BR.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x / 2);
+                FL.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x / 2);
+                FR.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x / 2);
 
 
                 TR.setPower(gamepad2.left_stick_y);
@@ -120,40 +119,38 @@ public class androidOp extends LinearOpMode {
                 }
 
                 //varables cant go past 1
-                if (rotate2 < 0)
-                {
+                if (rotate2 < 0) {
                     rotate2 = 0;
-                } else if (rotate2 > 1)
-                {
+                } else if (rotate2 > 1) {
                     rotate2 = 1;
                 }
 
-                if (rol > 1)
-                {
+                if (rol > 1) {
                     rol = 1;
-                } else if (rol < 0)
-                {
+                } else if (rol < 0) {
                     rol = 0;
                 }
-                if (gamepad2.a)
-                {
+                if (gamepad2.a) {
                     claw.setPosition(0.5);
-                } else if(gamepad2.b)
-                {
+                } else if (gamepad2.b) {
                     claw.setPosition(0);
                 }
-                if (gamepad2.x)
-                {
+                if (gamepad2.x) {
                     rol = 0.6;
                     rotate2 = 0.7;
-                } else if (gamepad2.y)
-                {
+                } else if (gamepad2.y) {
                     rol = 0;
                 }
-
+                int limit = 0;
+                if (gamepad2.right_stick_button){
+                    limit = 6000;
+                } else if (gamepad2.left_stick_button)
+                {
+                    limit = 4000;
+                }
                 // Slide motor control (gamepad2.right_stick_y)
                 int currentPosition = slides.getCurrentPosition();
-                int dynamicUpperLimit = calculateDynamicUpperLimit(currentPosition);
+                int dynamicUpperLimit = (limit);
                 double slidePower = -gamepad2.right_stick_x;
 
                 // software limits for slide extension
@@ -165,7 +162,7 @@ public class androidOp extends LinearOpMode {
                 slides.setPower(slidePower);
 
                 // TR control (gamepad2.left_stick_y)
-                int anglePosition = TR.getCurrentPosition();
+                /*int anglePosition = TR.getCurrentPosition();
                 double anglePower = -gamepad2.left_stick_y;
 
                 //  software limits for TR
@@ -176,32 +173,32 @@ public class androidOp extends LinearOpMode {
                 }
 
                 TR.setPower(anglePower);
-
+*/
                 // Telemetry for debugging
                 telemetry.addData("Slide Position", currentPosition);
                 telemetry.addData("Dynamic Upper Limit", dynamicUpperLimit);
-                telemetry.addData("Angle Position", anglePosition);
+                //telemetry.addData("Angle Position", anglePosition);
                 telemetry.update();
 
 
                 pitch.setPosition(rotate2);
                 roll.setPosition(rol);
-                //nate.setPosition(rotate2);
                 telemetry.addData("rotate", rotate2);
                 telemetry.addData("Left Pow", BL.getPower());
                 telemetry.addData("Right Pow", BR.getPower());
-                telemetry.addData("rol: ",rol);
+                telemetry.addData("rol: ", rol);
                 telemetry.update();
             }
         }
     }
+}
 
     /**
      * Calculates the dynamic upper limit based on the slide's current position.
      * @param currentPosition The current position of the slides (encoder value).
      * @return The dynamically calculated upper limit.
      */
-    private int calculateDynamicUpperLimit(int currentPosition) {
+/*    private int calculateDynamicUpperLimit(int currentPosition) {
         //Allow more extension as the slide moves up
         if (currentPosition < 1000) {
             return LOWER_LIMIT + 4000;
@@ -212,3 +209,4 @@ public class androidOp extends LinearOpMode {
         }
     }
 }
+*/
