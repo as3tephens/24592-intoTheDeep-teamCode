@@ -22,10 +22,11 @@ public class androidOp extends LinearOpMode {
     // Software limits for the slide (you can modify these)
     private final int LOWER_LIMIT = 0; // Minimum encoder position (retracted)
     private final int MAX_EXTENSION_LIMIT = 5000; // Maximum encoder position (fully extended)
+    private int limit = 0;
 
     // Angle limits
-    private final int ANGLE_MIN = 2000; // Minimum angle position (fully lowered)
-    private final int ANGLE_MAX = 4000; // Maximum angle position (fully raised)
+   // private final int ANGLE_MIN = 2000; // Minimum angle position (fully lowered)
+    //private final int ANGLE_MAX = 4000; // Maximum angle position (fully raised)
 
 
     @Override
@@ -141,7 +142,7 @@ public class androidOp extends LinearOpMode {
                 } else if (gamepad2.y) {
                     rol = 0;
                 }
-                int limit = 0;
+
                 if (gamepad2.right_stick_button){
                     limit = 6000;
                 } else if (gamepad2.left_stick_button)
@@ -150,8 +151,8 @@ public class androidOp extends LinearOpMode {
                 }
                 // Slide motor control (gamepad2.right_stick_y)
                 int currentPosition = slides.getCurrentPosition();
+                double slidePower = -gamepad2.right_stick_y;
                 int dynamicUpperLimit = (limit);
-                double slidePower = -gamepad2.right_stick_x;
 
                 // software limits for slide extension
                 if (currentPosition <= LOWER_LIMIT && slidePower < 0) {
@@ -175,12 +176,10 @@ public class androidOp extends LinearOpMode {
                 TR.setPower(anglePower);
 */
                 // Telemetry for debugging
+                telemetry.addData("Slide Power", slidePower);
                 telemetry.addData("Slide Position", currentPosition);
                 telemetry.addData("Dynamic Upper Limit", dynamicUpperLimit);
                 //telemetry.addData("Angle Position", anglePosition);
-                telemetry.update();
-
-
                 pitch.setPosition(rotate2);
                 roll.setPosition(rol);
                 telemetry.addData("rotate", rotate2);
