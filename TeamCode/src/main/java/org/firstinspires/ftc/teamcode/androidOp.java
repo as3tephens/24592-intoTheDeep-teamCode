@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "androidOp")
 public class androidOp extends LinearOpMode {
-
+private boolean Claw = false;
     private DcMotor BL;
     private DcMotor BR;
     private DcMotor FL;
@@ -133,8 +133,10 @@ public class androidOp extends LinearOpMode {
                 }
                 if (gamepad2.a) {
                     claw.setPosition(0.5);
+                    Claw = false;
                 } else if (gamepad2.b) {
                     claw.setPosition(0);
+                    Claw = true;
                 }
                 if (gamepad2.x) {
                     rol = 0.6;
@@ -179,6 +181,7 @@ public class androidOp extends LinearOpMode {
                 telemetry.addData("Slide Power", slidePower);
                 telemetry.addData("Slide Position", currentPosition);
                 telemetry.addData("Dynamic Upper Limit", dynamicUpperLimit);
+                telemetry.addData("Claw",Claw);
                 //telemetry.addData("Angle Position", anglePosition);
                 pitch.setPosition(rotate2);
                 roll.setPosition(rol);
