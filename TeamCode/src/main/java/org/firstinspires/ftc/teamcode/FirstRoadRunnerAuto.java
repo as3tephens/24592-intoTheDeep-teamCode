@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.moveSlides;
 
 
 @Autonomous(name = "first Road Runner Auto")
@@ -70,6 +71,12 @@ public class FirstRoadRunnerAuto extends LinearOpMode
                         .waitSeconds(0.1)
                         .lineToY(13)
                         .splineToLinearHeading(new Pose2d(-47,10,Math.toRadians(90)),Math.PI *2)
+                        .waitSeconds(0.1)
+                        .lineToY(60)
+
+                        //push into observation
+                        .splineToLinearHeading(new Pose2d(-58,10,Math.toRadians(90)),Math.PI/2)
+                        .lineToY(13)
                         .waitSeconds(0.1)
                         .lineToY(60)
 
