@@ -118,7 +118,7 @@ public class ComplexAutonomous extends LinearOpMode {
      * Follows a trajectory and checks the robot's position after completion.
      * @param trajectory The trajectory to follow.
      */
-
+/*
     private void followTrajectoryWithCheck(Action trajectory) {
         drive.followTrajectory(trajectory);
 
@@ -151,3 +151,4 @@ public class ComplexAutonomous extends LinearOpMode {
         telemetry.update();
     }
 }
+*/

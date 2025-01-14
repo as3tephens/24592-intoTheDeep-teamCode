@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+
 
 
 @TeleOp(name = "androidOp")
@@ -178,6 +181,10 @@ private boolean Claw = false;
                 TR.setPower(anglePower);
 */
                 // Telemetry for debugging
+                telemetry.addData("X", currentPose.getX());
+                telemetry.addData("Y", currentPose.getY());
+                telemetry.addData("Heading", currentPose.getHeading());
+                telemetry.update();
                 telemetry.addData("Slide Power", slidePower);
                 telemetry.addData("Slide Position", currentPosition);
                 telemetry.addData("Dynamic Upper Limit", dynamicUpperLimit);

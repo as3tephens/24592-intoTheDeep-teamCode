@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 
@@ -18,7 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 @Autonomous(name = "first Road Runner Auto")
-public class FirstRoadRunnerAuto extends LinearOpMode
+public class RoadRunnerAuto extends LinearOpMode
 {
     @Override
 
@@ -26,7 +27,7 @@ public class FirstRoadRunnerAuto extends LinearOpMode
     {
         //init drive train
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
-
+        //drive.setDrivePowers(new PoseVelocity2d(new Vector2d(-37,62),0.5));
         //init claw servos
         Servo claw = hardwareMap.servo.get("claw");
         Servo pitch = hardwareMap.servo.get("pitch");
@@ -46,19 +47,19 @@ public class FirstRoadRunnerAuto extends LinearOpMode
         waitForStart();
 
         Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(-27, 62, Math.toRadians(270)))
-                        .setTangent(0)
+                drive.actionBuilder(new Pose2d(-17, 62, Math.toRadians(270)))
+                        //.setTangent(0)
                         //first sample
 
                         //move slides up
-                        .stopAndAdd(new MoveSlides(TR,1,1000))
+                        //.stopAndAdd(new MoveSlides(TR,1,1000))
 
                         //go to bar
-                        .splineToConstantHeading(new Vector2d(0,38),Math.PI*2)
+                        //.splineToConstantHeading(new Vector2d(0,38),Math.PI*2)
 
                         //move slides down and let go of specamen
-                        .stopAndAdd(new MoveSlides(TR,1,500))
-                        .waitSeconds(0.1)
+                        //.stopAndAdd(new MoveSlides(TR,1,500))
+                        /*.waitSeconds(0.1)
                         .stopAndAdd(new MoveClaw(claw,roll,pitch,0,0,0))
                         .waitSeconds(0.2)
 
@@ -142,10 +143,16 @@ public class FirstRoadRunnerAuto extends LinearOpMode
                         //let go of it
                         .stopAndAdd(new MoveClaw(claw,roll,pitch,0,0,0))
                         //park
-                        .strafeTo(new Vector2d(-17,44))
-                        .splineToSplineHeading(new Pose2d(-47,57,Math.toRadians(90)),Math.PI)
+                        */
+                        //.lineToY(47)
+                        .waitSeconds(3)
+                        //.strafeTo(new Vector2d(-27,65))
+                        .strafeTo(new Vector2d(-7,62))
+                        //.lineToX(60)
+                        //.splineToSplineHeading(new Pose2d(-47,57,Math.toRadians(90)),Math.PI)
                         .build()
         );
+        //drive.setDrivePowers(new PoseVelocity2d(new Vector2d(-17,62),0.5));
     }
 
 
