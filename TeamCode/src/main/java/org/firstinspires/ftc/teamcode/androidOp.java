@@ -181,9 +181,9 @@ private boolean Claw = false;
                 TR.setPower(anglePower);
 */
                 // Telemetry for debugging
-                telemetry.addData("X", currentPose.getX());
-                telemetry.addData("Y", currentPose.getY());
-                telemetry.addData("Heading", currentPose.getHeading());
+                //telemetry.addData("X", currentPose.getX());
+                //telemetry.addData("Y", currentPose.getY());
+                //telemetry.addData("Heading", currentPose.getHeading());
                 telemetry.update();
                 telemetry.addData("Slide Power", slidePower);
                 telemetry.addData("Slide Position", currentPosition);
