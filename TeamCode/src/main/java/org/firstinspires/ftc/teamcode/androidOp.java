@@ -27,9 +27,10 @@ private boolean Claw = false;
     private final int MAX_EXTENSION_LIMIT = 5000; // Maximum encoder position (fully extended)
     private int limit = 0;
 
+
     // Angle limits
-   // private final int ANGLE_MIN = 2000; // Minimum angle position (fully lowered)
-    //private final int ANGLE_MAX = 4000; // Maximum angle position (fully raised)
+    private final int ANGLE_MIN = 000; // Minimum angle position (fully lowered)
+    private final int ANGLE_MAX = 14450; // Maximum angle position (fully raised)
 
 
     @Override
@@ -54,6 +55,7 @@ private boolean Claw = false;
 
         TR = hardwareMap.get(DcMotor.class, "TR");
         TR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ;
 
         // Reset encoders and set run mode
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -83,13 +85,18 @@ private boolean Claw = false;
                 //slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-                BL.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x / 2);
-                BR.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x / 2);
-                FL.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x / 2);
-                FR.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x / 2);
+                double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
+                double x = gamepad1.left_stick_x;
+                double rx = gamepad1.right_stick_x;
+
+                FL.setPower(y + x + rx);
+                BL.setPower(y - x + rx);
+                FR.setPower(y - x - rx);
+                BR.setPower(y + x - rx);
 
 
-                TR.setPower(gamepad2.left_stick_y);
+
+                //TR.setPower(gamepad2.left_stick_y);
 
                 //broken strafing
         /*if (gamepad1.left_bumper) {
@@ -157,7 +164,8 @@ private boolean Claw = false;
                 // Slide motor control (gamepad2.right_stick_y)
                 int currentPosition = slides.getCurrentPosition();
                 double slidePower = -gamepad2.right_stick_y;
-                int dynamicUpperLimit = (limit);
+                double stickInPut = -gamepad2.right_stick_y;
+                int dynamicUpperLimit = (calculateDynamicUpperLimit(currentPosition));
 
                 // software limits for slide extension
                 if (currentPosition <= LOWER_LIMIT && slidePower < 0) {
@@ -167,8 +175,8 @@ private boolean Claw = false;
                 }
                 slides.setPower(slidePower);
 
-                // TR control (gamepad2.left_stick_y)
-                /*int anglePosition = TR.getCurrentPosition();
+                //TR control (gamepad2.left_stick_y);
+                int anglePosition = -TR.getCurrentPosition();
                 double anglePower = -gamepad2.left_stick_y;
 
                 //  software limits for TR
@@ -178,18 +186,18 @@ private boolean Claw = false;
                     anglePower = 0;
                 }
 
-                TR.setPower(anglePower);
-*/
+                TR.setPower(-anglePower);
+
                 // Telemetry for debugging
-                //telemetry.addData("X", currentPose.getX());
-                //telemetry.addData("Y", currentPose.getY());
-                //telemetry.addData("Heading", currentPose.getHeading());
-                telemetry.update();
+                telemetry.addData("tower position", -TR.getCurrentPosition());
+                telemetry.addData("tower power", anglePower);
+                telemetry.addData("tower input", gamepad2.left_stick_y);
                 telemetry.addData("Slide Power", slidePower);
                 telemetry.addData("Slide Position", currentPosition);
                 telemetry.addData("Dynamic Upper Limit", dynamicUpperLimit);
                 telemetry.addData("Claw",Claw);
                 //telemetry.addData("Angle Position", anglePosition);
+                telemetry.addData("stick power", stickInPut);
                 pitch.setPosition(rotate2);
                 roll.setPosition(rol);
                 telemetry.addData("rotate", rotate2);
@@ -200,22 +208,20 @@ private boolean Claw = false;
             }
         }
     }
-}
 
     /**
      * Calculates the dynamic upper limit based on the slide's current position.
      * @param currentPosition The current position of the slides (encoder value).
      * @return The dynamically calculated upper limit.
      */
-/*    private int calculateDynamicUpperLimit(int currentPosition) {
+ private int calculateDynamicUpperLimit(int currentPosition) {
         //Allow more extension as the slide moves up
-        if (currentPosition < 1000) {
-            return LOWER_LIMIT + 4000;
-        } else if (currentPosition < 3000) {
+        if (currentPosition < 5300) {
             return LOWER_LIMIT + 6000;
+        } else if (currentPosition < 3000) {
+            return LOWER_LIMIT + 8000;
         } else {
             return MAX_EXTENSION_LIMIT;
         }
     }
 }
-*/
