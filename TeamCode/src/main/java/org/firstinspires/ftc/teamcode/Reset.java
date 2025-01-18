@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
 
 
 @Autonomous(name = "reset")
@@ -30,10 +30,12 @@ public class Reset extends LinearOpMode {
     waitForStart();
         slides.setTargetPosition(0);
         slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slides.setPower(0.5);
         if (slides.getCurrentPosition() == 0)
         {
             TR.setTargetPosition(0);
             TR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            TR.setPower(0.5);
         }
     }
 }

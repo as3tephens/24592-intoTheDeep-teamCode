@@ -188,6 +188,24 @@ private boolean Claw = false;
 
                 TR.setPower(-anglePower);
 
+                //angle for slides auto buttion thing
+                if (gamepad2.right_bumper){
+                    //set position to roughly level
+                    TR.setTargetPosition(5300);
+                    TR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                } else if(gamepad2.left_bumper)
+                {
+                    //set position to hang on high bar
+                    TR.setTargetPosition(8000);
+                    TR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                } else if (gamepad2.right_bumper && gamepad2.left_bumper)
+                {
+                    TR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    // Allow joystick control again
+                    TR.setPower(-gamepad2.left_stick_y);
+                }
+
+
                 // Telemetry for debugging
                 telemetry.addData("tower position", -TR.getCurrentPosition());
                 telemetry.addData("tower power", anglePower);
