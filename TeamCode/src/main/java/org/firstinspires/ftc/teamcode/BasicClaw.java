@@ -12,6 +12,7 @@ public class BasicClaw {
     public Servo roll;
     private static double clawClosed = 0;
     private static double clawOpen = 0.5;
+
     //TODO: Put values for pitch and roll
     private static double pitchLevel = 0;
     private static double rollUp = 0;
